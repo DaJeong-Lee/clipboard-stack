@@ -7,14 +7,16 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 const clipboard = require('electron').clipboard;
-
-const ipc = require('electron').ipcRenderer;
-
 const ipcMain = require('electron').ipcMain;
+//const ipc = require('electron').ipcRenderer;
+
+const globalShortcut = electron.globalShortcut;
+const dialog = require('electron').dialog;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+var data = [];
 
 function createWindow () {
   // Create the browser window.
@@ -28,8 +30,6 @@ function createWindow () {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  clipboardInit();
-
   // In main process.
  
   ipcMain.on('asynchronous-message', function(event, arg) {
@@ -37,11 +37,26 @@ function createWindow () {
     event.sender.send('asynchronous-reply', 'pong1');
   });
 
-  ipcMain.on('synchronous-message', function(event, arg) {
-    console.log(arg);  // prints "ping"
-    event.returnValue = 'pong2';
+  mainWindow.on('blur', function(){
+
   });
 
+  // Register shortcut listener.
+  var register_copy = globalShortcut.register('CommandOrControl+Shift+C', function() {
+    setclipboard();
+  });
+
+  if (!register_copy) {
+    console.log('registration failed');
+  }
+
+  var register_paste = globalShortcut.register('CommandOrControl+Shift+V', function() {
+    getclipboard();
+  });
+
+  if (!register_paste) {
+    console.log('registration failed');
+  }
   
 
   // Emitted when the window is closed.
@@ -53,8 +68,18 @@ function createWindow () {
   });
 }
 
-function clipboardInit(){
-  clipboard.writeText('Example String');
+function setclipboard(){
+  var readText = clipboard.readText();
+  //console.log(readText);
+  data.push(readText);
+  dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: readText+" 등록"});
+  mainWindow.webContents.send('setClipboard', data);
+}
+
+function getclipboard(){
+  dialog.showMessageBox({type:"none", buttons:data, title:"Clipboard Stack", message: "선택하세요"}, function(response){
+    console.log(response); //response는 index (0 ~ X)
+  });
 }
 
 // This method will be called when Electron has finished
@@ -76,4 +101,12 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+app.on('will-quit', function() {
+  // Unregister a shortcut.
+  //globalShortcut.unregister('CommandOrControl+Shift+C');
+
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
 });
