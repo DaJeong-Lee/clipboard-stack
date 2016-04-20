@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <script>
+    // In renderer process (web page).
+    const ipcRenderer = require('electron').ipcRenderer;
+    console.log(ipcRenderer.sendSync('synchronous-message', 'ping1')); // prints "pong"
+
+    ipcRenderer.on('asynchronous-reply', function(event, arg) {
+      console.log(arg); // prints "pong"
+    });
+    ipcRenderer.send('asynchronous-message', 'ping2');
+  </script>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+    Testing...
+  </body>
+</html>
