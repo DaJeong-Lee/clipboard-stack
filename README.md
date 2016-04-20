@@ -1,1 +1,5 @@
-# clipboard-stack
+### Clipboard Stack
+
+  - 어디서든 자동완성 기능이 된다면 ??
+  - 클립보드에 저장된 내용을 자동완성으로 보여주기
+  
