@@ -8,27 +8,49 @@
     p {
         margin-top: 5px;
         margin-bottom: 5px;
-      }
+    }
+    h3{
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    input, img {
+        vertical-align:middle;
+    }
   </style>
   <script>
 
     window.$ = window.jQuery = require('./js/jquery-2.2.3.min.js');
 
+    var data = [];
+
     $(function(){
       //ready 
+     
+      $('#btn_trash').click(function(){
+         if(confirm('Do you want to delete?')){
+             var notDeleted = [];
+             $('input:checkbox[name="list"]').each(function() {
+                  //checked 처리된 항목의 값
+                  if(!this.checked){
+                    notDeleted.push(data[this.value]);
+                  }
+             });
+
+             ipcRenderer.send('onTrash', notDeleted);
+         }
+      });
 
     });
-
-     
 
     // In renderer process (web page).
     const ipcRenderer = require('electron').ipcRenderer;
 
-    ipcRenderer.on('setClipboard', function(event, arg) {
+    ipcRenderer.on('onSetClipboard', function(event, arg) {
+      data = arg;
       console.log(arg);
       $('#div1').empty();
       $.each(arg, function(index, value){
-        $('#div1').append('<p style="font-size:10pt;">'+value+'</p>');
+        $('#div1').append('<p style="font-size:10pt;"><input type="checkbox" name="list" value="'+index+'"/>'+value+'</p>');
       });
     
     });
@@ -36,16 +58,18 @@
 
   </script>
   <body>
-    <p style="font-size:10pt;">이 App는 클립보드의 Text를 '저장하여' 필요시 선택하여 '붙여넣기' 하기위해 사용</p>
+    <p style="font-size:10pt;">이 App는 클립보드의 Text를 '등록하여' 필요시 선택하여 '붙여넣기' 하기위해 사용</p>
     <hr/>
     <div>
       <p style="font-size:12pt;font-weight:bold;">&lt;How to use&gt;</p>
-      <p style="font-size:10pt;">1. 클립보드에 저장 : Ctrl+C</p>
-      <p style="font-size:10pt;">2. Clipboard Stack 등록 : Ctrl+Shift+C</p>
-      <p style="font-size:10pt;">3. Clipboard Stack 붙여넣기 : Ctrl+Shift+V</p>
+      <p style="font-size:10pt;">1. Clipboard Stack 등록 : Ctrl+Shift+C</p>
+      <p style="font-size:10pt;">2. Clipboard Stack 붙여넣기 : Ctrl+Shift+V</p>
     </div>
     <hr/>
-    <h3>&lt;Saved List&gt;</h3>
+    <h3>
+      &lt;Saved List&gt;&nbsp; 
+      <img  id="btn_trash" src="./img/trash.png" style="cursor:pointer;"/>&nbsp; 
+    </h3>
     <div id="div1"> 
     </div>
   </body>

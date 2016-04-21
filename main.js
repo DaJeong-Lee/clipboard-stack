@@ -15,6 +15,8 @@ const dialog = require('electron').dialog;
 
 const shell = require('electron').shell;
 
+const fs = require('fs');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -46,8 +48,16 @@ function createWindow () {
   if (!register_paste) {
     console.log('registration failed');
   }
-  
-  
+
+  ipcMain.on('onTrash', function(event, arg) {
+    
+    data = arg;
+    //console.log(data);
+    
+    onSetClipboard();
+
+  });
+
 
 
   // Emitted when the window is closed.
@@ -55,17 +65,36 @@ function createWindow () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    saveFile();
+    
+    console.log('mainWindow closed');
     mainWindow = null;
+  });
+
+
+  mainWindow.webContents.on('did-finish-load', function() {
+    readFile();
+    onSetClipboard();
   });
 }
 
 function setClipboard(){
 
+  //autohotkey로 작성한 exe파일 실행
+  shell.openItem(".\\clipboard-copy.exe");
+
+  //0.3초 sleep
+  sleep(300);
+  
   var readText = clipboard.readText();
   //console.log(readText);
   data.push(readText);
   dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: readText+" 등록"});
-  mainWindow.webContents.send('setClipboard', data);
+  onSetClipboard();
+}
+
+function onSetClipboard(){
+  mainWindow.webContents.send('onSetClipboard', data);
 }
 
 function getClipboard(){
@@ -77,6 +106,41 @@ function getClipboard(){
     shell.openItem(".\\clipboard-paste.exe");
 
   });
+}
+
+
+
+function saveFile(){
+  console.log('saveFile : '+ data.join('||'));
+
+  fs.writeFileSync('.\\list.txt', data.join('||'),'utf-8', (err) => {
+    if (err) throw err; //if error 
+    console.log("sucessfully saved");
+  });
+}
+
+
+
+function readFile(){
+ 
+   var readData = fs.readFileSync('.\\list.txt', 'utf8');
+   console.log('readData: '+readData.length);
+
+   if(readData.length > 0){
+     var temp = readData.split('||');
+     console.log(temp.length);
+
+     temp.forEach(function(item){
+        data.push(item);
+     });
+
+   }
+}
+
+
+function sleep(milliSeconds) {
+  var startTime = new Date().getTime();
+  while (new Date().getTime() < startTime + milliSeconds);
 }
 
 // This method will be called when Electron has finished
