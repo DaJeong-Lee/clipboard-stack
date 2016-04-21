@@ -87,7 +87,7 @@ function setClipboard(){
   sleep(300);
   
   var readText = clipboard.readText();
-  //console.log(readText);
+  console.log('setClipboard : '+readText);
   data.push(readText);
   dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: readText+" 등록"});
   onSetClipboard();
@@ -101,6 +101,7 @@ function getClipboard(){
   dialog.showMessageBox({type:"none", buttons:data, title:"Clipboard Stack", message: "선택하세요"}, function(response){
     //console.log(response); //response는 index (0 ~ X)
     clipboard.writeText(data[response]);
+    console.log('getClipboard : '+ data[response]);
 
     //autohotkey로 작성한 exe파일 실행
     shell.openItem(".\\clipboard-paste.exe");
@@ -124,11 +125,9 @@ function saveFile(){
 function readFile(){
  
    var readData = fs.readFileSync('.\\list.txt', 'utf8');
-   console.log('readData: '+readData.length);
-
+   console.log('readData.length : '+readData.length);
    if(readData.length > 0){
      var temp = readData.split('||');
-     console.log(temp.length);
 
      temp.forEach(function(item){
         data.push(item);

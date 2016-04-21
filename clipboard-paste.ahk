@@ -1,1 +1,1 @@
-send, {ctrl down}v{ctrl up}
+send, ^v
