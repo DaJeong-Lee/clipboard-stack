@@ -1,0 +1,1 @@
+send, {ctrl down}v{ctrl up}
