@@ -50,6 +50,14 @@ function createWindow () {
     console.log('registration failed');
   }
 
+  const register_paste_matched = globalShortcut.register('CommandOrControl+Shift+M', function() {
+    getClipboardWithMatchedData(data);
+  });
+
+  if (!register_paste_matched) {
+    console.log('registration failed');
+  }
+
   ipcMain.on('onTrash', function(event, arg) {
     data = arg;
     onSetClipboard(arg);
@@ -76,8 +84,8 @@ function createWindow () {
   });
 }
 
-function setClipboard(data){
 
+function readClipboardData(){
   //autohotkey로 작성한 exe파일 실행
   shell.openItem(".\\clipboard-copy.exe");
 
@@ -87,6 +95,12 @@ function setClipboard(data){
   var readText = clipboard.readText();
 
   console.log('setClipboard : '+readText);
+  return readText;
+}
+
+function setClipboard(data){
+
+  var readText = readClipboardData();
 
   var msg = ' \' is faild to save';
 
@@ -113,7 +127,48 @@ function onSetClipboard(data){
   mainWindow.webContents.send('onSetClipboard', data);
 }
 
+function getMatchedData(data){
+
+  //autohotkey로 작성한 exe파일 실행
+  shell.openItem(".\\clipboard-copy-word.exe");
+
+  //0.3초 sleep
+  sleep(300);
+
+  var readText = clipboard.readText();
+
+  var pattern = RegExp(readText, 'i');
+  var matchedData = [];
+  data.forEach(function(item){
+    if(pattern.test(item)){
+      matchedData.push(item);
+    }
+  });
+
+  return matchedData;
+}
+
+function getClipboardWithMatchedData(data){
+
+  var matchedData = getMatchedData(data);
+
+  if(matchedData.length === 0){
+    dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: 'No matched data in list'});
+    return false;
+  }
+
+  dialog.showMessageBox({type:"none", buttons:matchedData, title:"Clipboard Stack", message: "선택하세요"}, function(response){
+    //console.log(response); //response는 index (0 ~ X)
+    clipboard.writeText(matchedData[response]);
+    console.log('getClipboard : '+ matchedData[response]);
+
+    //autohotkey로 작성한 exe파일 실행
+    shell.openItem(".\\clipboard-paste.exe");
+  });
+}
+
 function getClipboard(data){
+
   dialog.showMessageBox({type:"none", buttons:data, title:"Clipboard Stack", message: "선택하세요"}, function(response){
     //console.log(response); //response는 index (0 ~ X)
     clipboard.writeText(data[response]);

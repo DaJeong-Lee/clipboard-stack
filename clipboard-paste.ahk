@@ -1,2 +1,3 @@
 send, ^v
+clipboard = 
 ExitApp
