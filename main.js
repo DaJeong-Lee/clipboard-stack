@@ -77,7 +77,7 @@ function createWindow () {
 }
 
 function setClipboard(data){
-  
+
   //autohotkey로 작성한 exe파일 실행
   shell.openItem(".\\clipboard-copy.exe");
 
@@ -85,6 +85,7 @@ function setClipboard(data){
   sleep(300);
   
   var readText = clipboard.readText();
+
   console.log('setClipboard : '+readText);
 
   var msg = ' \' is faild to save';
@@ -120,7 +121,6 @@ function getClipboard(data){
 
     //autohotkey로 작성한 exe파일 실행
     shell.openItem(".\\clipboard-paste.exe");
-
   });
 }
 
@@ -132,7 +132,7 @@ function saveFile(data, filePath){
   if(!Array.isArray(data)){
     data = [];
   }
-  
+
   console.log('saveFile : '+ data.join('||'));
 
   fs.writeFileSync(filePath, data.join('||'),'utf-8', (err) => {

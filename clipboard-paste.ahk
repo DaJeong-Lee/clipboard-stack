@@ -1,1 +1,2 @@
 send, ^v
+ExitApp
