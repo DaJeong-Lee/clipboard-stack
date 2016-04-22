@@ -127,6 +127,12 @@ function getClipboard(data){
 
 
 function saveFile(data, filePath){
+
+  //데이터가 없을때는 Array로 초기화 해줌 
+  if(!Array.isArray(data)){
+    data = [];
+  }
+  
   console.log('saveFile : '+ data.join('||'));
 
   fs.writeFileSync(filePath, data.join('||'),'utf-8', (err) => {
