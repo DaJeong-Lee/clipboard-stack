@@ -26,6 +26,13 @@
     $(function(){
       //ready 
      
+      $('#chk_all').click(function(){
+        //checkbox toggle
+        $('input:checkbox[name="list"]').prop("checked", function(){
+            return !$(this).prop('checked');
+        });
+      });
+
       $('#btn_trash').click(function(){
          if(confirm('Do you want to delete?')){
              var notDeleted = [];
@@ -37,6 +44,9 @@
              });
 
              ipcRenderer.send('onTrash', notDeleted);
+
+             //#chk_all unchecked
+             $('#chk_all').prop("checked", false);
          }
       });
 
@@ -58,7 +68,7 @@
 
   </script>
   <body>
-    <p style="font-size:10pt;">이 App는 클립보드의 Text를 '등록하여' 필요시 선택하여 '붙여넣기' 하기위해 사용</p>
+    <p style="font-size:10pt;">이 App는 Clipboard Stack에 Text를 '등록하여' 필요시 선택하여 '붙여넣기' 하기위해 사용</p>
     <hr/>
     <div>
       <p style="font-size:12pt;font-weight:bold;">&lt;How to use&gt;</p>
@@ -70,7 +80,10 @@
       &lt;Saved List&gt;&nbsp; 
       <img  id="btn_trash" src="./img/trash.png" style="cursor:pointer;"/>&nbsp; 
     </h3>
-    <div id="div1"> 
+    <div style="border:1px solid black;">
+      <p style="font-size:10pt;font-weight:bold;"><input type="checkbox" id="chk_all" name="chk_all" value="checkAll"/>All</p>
+    </div>
+    <div id="div1" style="border:1px solid black;"> 
     </div>
   </body>
 </html>

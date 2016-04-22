@@ -20,7 +20,6 @@ const fs = require('fs');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-var data = [];
 
 function createWindow () {
   // Create the browser window.
@@ -33,16 +32,18 @@ function createWindow () {
   //mainWindow.webContents.openDevTools();
 
   // Register shortcut listener.
-  var register_copy = globalShortcut.register('CommandOrControl+Shift+C', function() {
-    setClipboard();
+  var data = [];
+  const register_copy = globalShortcut.register('CommandOrControl+Shift+C', function() {
+    data = setClipboard(data);
+    onSetClipboard(data);
   });
 
   if (!register_copy) {
     console.log('registration failed');
   }
 
-  var register_paste = globalShortcut.register('CommandOrControl+Shift+V', function() {
-    getClipboard();
+  const register_paste = globalShortcut.register('CommandOrControl+Shift+V', function() {
+    getClipboard(data);
   });
 
   if (!register_paste) {
@@ -50,22 +51,19 @@ function createWindow () {
   }
 
   ipcMain.on('onTrash', function(event, arg) {
-    
     data = arg;
-    //console.log(data);
-    
-    onSetClipboard();
+    onSetClipboard(arg);
 
   });
 
-
+  const filePath = '.\\list.txt';
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    saveFile();
+    saveFile(data, filePath);
     
     console.log('mainWindow closed');
     mainWindow = null;
@@ -73,13 +71,13 @@ function createWindow () {
 
 
   mainWindow.webContents.on('did-finish-load', function() {
-    readFile();
-    onSetClipboard();
+    data = readFile(filePath);
+    onSetClipboard(data);
   });
 }
 
-function setClipboard(){
-
+function setClipboard(data){
+  
   //autohotkey로 작성한 exe파일 실행
   shell.openItem(".\\clipboard-copy.exe");
 
@@ -88,16 +86,33 @@ function setClipboard(){
   
   var readText = clipboard.readText();
   console.log('setClipboard : '+readText);
-  data.push(readText);
-  dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: readText+" 등록"});
-  onSetClipboard();
+
+  var msg = ' \' is faild to save';
+
+  //데이터가 없을때는 Array로 초기화 해줌 
+  if(!Array.isArray(data)){
+    data = [];
+  }
+
+  if(readText.length > 0){
+    if(isExistInArray(data, readText)){
+      msg = '\' is already saved';
+    }else{
+      data.push(readText);
+      msg = '\' is saved';
+    }
+  } 
+  
+  dialog.showMessageBox({type:"info", buttons:["ok"], title:"Clipboard Stack", message: '\''+readText+msg});
+  
+  return data;
 }
 
-function onSetClipboard(){
+function onSetClipboard(data){
   mainWindow.webContents.send('onSetClipboard', data);
 }
 
-function getClipboard(){
+function getClipboard(data){
   dialog.showMessageBox({type:"none", buttons:data, title:"Clipboard Stack", message: "선택하세요"}, function(response){
     //console.log(response); //response는 index (0 ~ X)
     clipboard.writeText(data[response]);
@@ -111,28 +126,22 @@ function getClipboard(){
 
 
 
-function saveFile(){
+function saveFile(data, filePath){
   console.log('saveFile : '+ data.join('||'));
 
-  fs.writeFileSync('.\\list.txt', data.join('||'),'utf-8', (err) => {
+  fs.writeFileSync(filePath, data.join('||'),'utf-8', (err) => {
     if (err) throw err; //if error 
     console.log("sucessfully saved");
   });
 }
 
 
-
-function readFile(){
- 
-   var readData = fs.readFileSync('.\\list.txt', 'utf8');
+function readFile(filePath){
+    
+   var readData = fs.readFileSync(filePath, 'utf8');
    console.log('readData.length : '+readData.length);
    if(readData.length > 0){
-     var temp = readData.split('||');
-
-     temp.forEach(function(item){
-        data.push(item);
-     });
-
+      return readData.split('||');
    }
 }
 
@@ -140,6 +149,15 @@ function readFile(){
 function sleep(milliSeconds) {
   var startTime = new Date().getTime();
   while (new Date().getTime() < startTime + milliSeconds);
+}
+
+function isExistInArray(data, value){
+  
+  if(data.indexOf(value) > -1){
+    return true;
+  }else{
+    return false;
+  }
 }
 
 // This method will be called when Electron has finished
