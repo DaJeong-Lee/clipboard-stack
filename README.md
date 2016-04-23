@@ -10,9 +10,11 @@
 ---
 
  * Clipboard Stack 등록 : Ctrl+Shift+C
-    > 등록할 단어를 드래그(Block)한 후 Ctrl+Shift+C를 누르면 등록
+   - 등록할 단어를 드래그(Block)한 후 Ctrl+Shift+C를 누르면 등록
  * Clipboard Stack 붙여넣기 : Ctrl+Shift+V
  * Clipboard Stack 자동완성 기능 : Ctrl+Shift+M (Matched Data)
+    - 등록된 단어중 해당 글자가 들어간 List만 보여줌 
+    - ex) Clipboard Stack에 '안녕하세요'가 있고, '안녕'만 쓰고 Ctrl+Shift+M을 누르면 '안녕하세요'가 입력됩니다.
 
 ---
 
