@@ -8,9 +8,11 @@
   1. 배포판을 다운로드 한 후 압축을 풀어주세요
   2. Clipboard-Stact.exe 실행
 ---
-  - Clipboard Stack 등록 : 'Ctrl+Shift+C'
-  - Clipboard Stack 붙여넣기 : 'Ctrl+Shift+V'
-  - Clipboard Stack 자동완성 기능 : 'Ctrl+Shift+M' (Matched Data)
+
+ * Clipboard Stack 등록 : Ctrl+Shift+C
+ * Clipboard Stack 붙여넣기 : Ctrl+Shift+V
+ * Clipboard Stack 자동완성 기능 : Ctrl+Shift+M (Matched Data)
+
 ---
 
 ####배포판 다운로드
