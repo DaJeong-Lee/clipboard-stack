@@ -4,8 +4,9 @@
   - Clipboard Stack에 Data를 자동완성으로 보여주기
   - Clipboard Stack에 등록한 후 필요 시 붙여넣기 
 
-####배포판을 다운로드 한 후 압축을 풀어주세요
-####Clipboard-Stack.exe 실행
+####&lt;How To Use>
+#####- 배포판을 다운로드 한 후 압축을 풀어주세요
+#####- Clipboard-Stack.exe 실행
 ---
 
  1. Clipboard Stack 등록 : Ctrl+Shift+C
