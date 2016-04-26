@@ -20,3 +20,4 @@
 ####배포판 다운로드
  - https://docs.google.com/uc?id=0B5-8pw-4TJgkdWlwWlUweHNSSkk&export=download
   
+<img src="https://raw.githubusercontent.com/DaJeong-Lee/dajeong-lee.github.com/master/images/clipboardStack1.png" width="500">
