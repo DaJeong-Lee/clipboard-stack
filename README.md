@@ -7,8 +7,8 @@
 
 # 
 ### &lt;How To Use>
-### - 배포판을 다운로드 한 후 압축을 풀어주세요
-### - Clipboard-Stack.exe 실행해주세요
+#### - 배포판을 다운로드 한 후 압축을 풀어주세요
+#### - Clipboard-Stack.exe 실행해주세요
 
 ---
 
