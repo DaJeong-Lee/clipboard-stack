@@ -1,8 +1,8 @@
 # Clipboard Stack
 
   - 어디서든 자동완성 기능이 된다면 ??
-  - Clipboard Stack에 등록한 후 필요 시 붙여넣기 
-
+  - Clipboard Stack에 등록한 후 필요 시 붙여넣기<br/>
+   (Electron으로 개발, widnows 7/10 64bit만 실행가능)
 ####&lt;How To Use>
 #####- 배포판을 다운로드 한 후 압축을 풀어주세요
 #####- Clipboard-Stack.exe 실행해주세요
